@@ -1,6 +1,7 @@
 
 import RPi.GPIO as GPIO
 from omxplayer import OMXPlayer
+from os import walk
 from time import sleep
 
 rows = [0, 4, 25, 24]
@@ -15,8 +16,20 @@ keypad = [
 
 songdir = '/home/pi/Music/'
 songs = {
- '1': 'santa_town.mp3'
+ '1': 'santa_town.mp3',
+ '2': 'jingle.mp3',
+ '3': 'feliz_navidad.mp3',
+ '4': 'frosty.mp3',
+ '5': 'housetop.mp3',
+ '6': 'little_snowman.mp3',
+ '7': 'monkeys.mp3',
+ '#': 'radio'
 }
+
+radiodir = songdir + 'Music Together/'
+radio_songs = []
+for (dirpath, dirnames, filenames) in walk(radiodir):
+  radio_songs.extend([dirpath + '/' + f for f in filenames])
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(rows, GPIO.OUT, initial = GPIO.LOW)
@@ -52,7 +65,8 @@ try:
 
       elif k in songs:
         if 'player' in globals(): player.quit()
-        player = OMXPlayer(songs[k])
+        song = random.choice(radio_songs) if songs[k] == 'radio' else songs[k]
+        player = OMXPlayer(song)
         paused = 0
 
       sleep(0.25)    
