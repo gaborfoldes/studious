@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 from omxplayer import OMXPlayer
 from os import walk
 from time import sleep
+import random
 
 rows = [0, 4, 25, 24]
 cols = [23, 22, 21, 18]
@@ -55,17 +56,21 @@ try:
 
     if k != '':
 
+      print 'Pressed: ' + k
       if k == '*' and 'player' in globals():
         if paused:
           player.play()
+          print 'Playing...'
           paused = 0
         else:
           player.pause()
+          print 'Paused...'
           paused = 1
 
       elif k in songs:
         if 'player' in globals(): player.quit()
-        song = random.choice(radio_songs) if songs[k] == 'radio' else songs[k]
+        song = random.choice(radio_songs) if songs[k] == 'radio' else songdir + songs[k]
+        print 'Playing ' + song
         player = OMXPlayer(song)
         paused = 0
 
