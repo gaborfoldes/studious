@@ -4,6 +4,7 @@ from omxplayer import OMXPlayer
 from os import walk
 from time import sleep
 import random
+from os import system
 
 rows = [0, 4, 25, 24]
 cols = [23, 22, 21, 18]
@@ -24,6 +25,7 @@ songs = {
  '5': 'housetop.mp3',
  '6': 'little_snowman.mp3',
  '7': 'monkeys.mp3',
+ '8': 'hannukah.mp3',
  '#': 'radio'
 }
 
@@ -66,6 +68,17 @@ try:
           player.pause()
           print 'Paused...'
           paused = 1
+
+      elif k == 'A':
+        system('curl -X POST https://api.particle.io/v1/devices/3c002f000547343337373737/xmas -d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31 -d setTo=switch')
+
+#      elif k == 'C':
+#        system('curl -X POST https://api.particle.io/v1/devices/3c002f000547343337373737/xmas -d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31 -d setTo=on')
+#        call(['curl', '-X POST', 'https://api.particle.io/v1/devices/3c002f000547343337373737/xmas', '-d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31', '-d setTo=on'])
+
+#      elif k == 'D':
+#        system('curl -X POST https://api.particle.io/v1/devices/3c002f000547343337373737/xmas -d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31 -d setTo=off')
+#        call(['curl', '-X POST', 'https://api.particle.io/v1/devices/3c002f000547343337373737/xmas', '-d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31', '-d setTo=off'])
 
       elif k in songs:
         if 'player' in globals(): player.quit()
