@@ -5,6 +5,7 @@ from os import walk
 from time import sleep
 import random
 from os import system
+from pprint import pprint
 
 rows = [0, 4, 25, 24]
 cols = [23, 22, 21, 18]
@@ -29,7 +30,8 @@ songs = {
  '#': 'radio'
 }
 
-radiodir = songdir + 'Music Together/'
+radio = 0
+radiodir = songdir # + 'Music Together/'
 radio_songs = []
 for (dirpath, dirnames, filenames) in walk(radiodir):
   radio_songs.extend([dirpath + '/' + f for f in filenames])
@@ -51,6 +53,14 @@ def get_key():
     GPIO.output(rows[y], GPIO.LOW)
   return key
 
+def play_song(song):
+  global player
+  if 'player' in globals(): player.quit()
+  print 'Playing ' + song
+  player = OMXPlayer(song, args = ['--no-osd', '--no-keys', '-o', 'local'])
+  paused = 0
+  
+
 try:
 
   while True:
@@ -70,24 +80,29 @@ try:
           paused = 1
 
       elif k == 'A':
-        system('curl -X POST https://api.particle.io/v1/devices/3c002f000547343337373737/xmas -d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31 -d setTo=switch')
+        system('curl -X POST https://api.particle.io/v1/devices/3c002f000547343337373737/xmas -d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31 -d setTo=switch1')
 
-#      elif k == 'C':
-#        system('curl -X POST https://api.particle.io/v1/devices/3c002f000547343337373737/xmas -d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31 -d setTo=on')
-#        call(['curl', '-X POST', 'https://api.particle.io/v1/devices/3c002f000547343337373737/xmas', '-d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31', '-d setTo=on'])
+      elif k == 'B':
+        system('curl -X POST https://api.particle.io/v1/devices/3c002f000547343337373737/xmas -d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31 -d setTo=switch2')
 
-#      elif k == 'D':
-#        system('curl -X POST https://api.particle.io/v1/devices/3c002f000547343337373737/xmas -d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31 -d setTo=off')
-#        call(['curl', '-X POST', 'https://api.particle.io/v1/devices/3c002f000547343337373737/xmas', '-d access_token=e4347a6c2c5f936c1e249c215f48a783d9696b31', '-d setTo=off'])
+      elif k == '#':
+        print 'Turning radio ON...'
+        radio = 1
+        play_song(random.choice(radio_songs))
+
+      elif k == '0':
+        if 'player' in globals(): player.quit()
+        print 'Turning radio OFF...'
+        radio = 0
 
       elif k in songs:
-        if 'player' in globals(): player.quit()
-        song = random.choice(radio_songs) if songs[k] == 'radio' else songdir + songs[k]
-        print 'Playing ' + song
-        player = OMXPlayer(song)
-        paused = 0
+        play_song( songdir + songs[k] )
 
-      sleep(0.25)    
+      sleep(0.25)
+
+    if radio == 1:
+      if player._process_monitor._Thread__stopped:
+        play_song(random.choice(radio_songs))
 
 except KeyboardInterrupt:
   if 'player' in globals(): player.quit()
