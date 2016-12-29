@@ -55,6 +55,7 @@ def get_key():
 
 def play_song(song):
   global player
+  global paused
   if 'player' in globals(): player.quit()
   print 'Playing ' + song
   player = OMXPlayer(song, args = ['--no-osd', '--no-keys', '-o', 'local'])
